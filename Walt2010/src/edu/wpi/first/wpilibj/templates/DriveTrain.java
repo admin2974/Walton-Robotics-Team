@@ -5,8 +5,6 @@
 
 package edu.wpi.first.wpilibj.templates;
 
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.Jaguar;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.SpeedController;
 
@@ -28,6 +26,8 @@ public class DriveTrain
         JoyStick_1 = left_JS;
         JoyStick_2 = right_JS;
         AfterBurners = false;
+
+
     }
     /**
     * This method should be called at least every 0.05 seconds in order to properly update the Drive Train based on Joystick Inputs
@@ -38,11 +38,11 @@ public class DriveTrain
             throw new NullPointerException("Null motor provided");
          if(!AfterBurners)
          {
-            drive(JoyStick_1.getY()/2,JoyStick_2.getY()/2);
+            ABS(SpeedController_1.get(),SpeedController_2.get(),JoyStick_1.getY()/2,JoyStick_2.getY()/2);
          }
          else
          {
-            drive(JoyStick_1.getY()*JoyStick_2.getY(),JoyStick_2.getY()*JoyStick_2.getY());//squares the power when in AfterBurner mode
+            ABS(SpeedController_1.get(),SpeedController_2.get(),JoyStick_1.getY()*2,JoyStick_2.getY()*2);//squares the power when in AfterBurner mode
          }
     }
     public void drive(double leftSpeed, double rightSpeed)
@@ -64,6 +64,29 @@ public class DriveTrain
             return -1.0;
         }
         return num;
+    }
+
+    private void ABS(double speed1,double speed2,double JS1,double JS2)
+    {
+        double leftSpeed,rightSpeed;
+        if(speed1-JS1>1.0||speed1-JS1<-1.0)
+        {
+            leftSpeed = JS1/2;
+        }
+        else
+        {
+            leftSpeed = JS1;
+        }
+        if(speed2-JS2>1.0||speed2-JS2<-1.0)
+        {
+            rightSpeed = JS2/2;
+        }
+        else
+        {
+            rightSpeed = JS2;
+        }
+        
+        drive(leftSpeed,rightSpeed);
     }
 
 }
