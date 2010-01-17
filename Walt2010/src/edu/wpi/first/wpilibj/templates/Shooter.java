@@ -9,6 +9,11 @@ package edu.wpi.first.wpilibj.templates;
  *
  * @author Admin
  */
-public class Shooter {
+public class Shooter
+{
+    public void fire(double distance)
+    {
+
+    }
 
 }

@@ -9,6 +9,9 @@ package edu.wpi.first.wpilibj.templates;
 
 
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Jaguar;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Timer;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -22,7 +25,17 @@ public class RobotMain extends IterativeRobot {
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
      */
-    public void robotInit() {
+    DriveTrain robot_drive;
+
+    Jaguar jag1, jag2;
+    SpecialJoystick JS1, JS2;
+    public void robotInit()
+    {
+        jag1 = new Jaguar(1);
+        jag2 = new Jaguar(2);
+        JS1 = new SpecialJoystick(this,1);
+        JS2 = new SpecialJoystick(this,2);
+        robot_drive = new DriveTrain(jag1,jag2,JS1,JS2);
 
     }
 
@@ -36,8 +49,15 @@ public class RobotMain extends IterativeRobot {
     /**
      * This function is called periodically during operator control
      */
-    public void teleopPeriodic() {
-        
+    public void teleopPeriodic()
+    {
+        while(true)//Infinate loop that checks the state of the robot and driver station every .02 seconds
+        {
+            robot_drive.update();
+            JS1.check();
+            JS2.check();
+            Timer.delay(kDefaultPeriod);
+        }
     }
     
 }
