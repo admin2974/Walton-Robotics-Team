@@ -25,7 +25,13 @@ public class VirtualField {
      * It also updates the angle at which the robot is pointed.
      */
     private Poller poller;
+    /**
+     * The accelerometer object. Needs the channel number
+     */
     private Accelerometer accel;
+    /**
+     * The gyroscope object. Needs the channel number
+     */
     private Gyro gyro;
     /**
      * The robot's X position on the field

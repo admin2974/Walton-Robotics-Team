@@ -20,14 +20,16 @@ import edu.wpi.first.wpilibj.Timer;
  * directory.
  */
 public class RobotMain extends IterativeRobot {
-    /**
-     * This function is run when the robot is first started up and should be
-     * used for any initialization code.
-     */
+
+    VirtualField field;
     DriveTrain robot_drive;
 
     Jaguar jag1, jag2;
     SpecialJoystick JS1, JS2;
+     /**
+     * This function is run when the robot is first started up and should be
+     * used for any initialization code.
+     */
     public void robotInit()
     {
         jag1 = new Jaguar(1);
@@ -36,6 +38,7 @@ public class RobotMain extends IterativeRobot {
         JS2 = new SpecialJoystick(this,2);
         robot_drive = new DriveTrain(jag1,jag2,JS1,JS2);
 
+        field = new VirtualField();
     }
 
     /**
