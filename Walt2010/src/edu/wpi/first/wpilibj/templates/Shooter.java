@@ -4,16 +4,20 @@
  */
 
 package edu.wpi.first.wpilibj.templates;
+import edu.wpi.first.wpilibj.Solenoid;
 
 /**
  *
- * @author Admin
+ * @author Sam Meyer
  */
 public class Shooter
 {
     public void fire(double distance)
     {
-
+        Solenoid shooter = new Solenoid(0);     // slot number
+        shooter.set(true);      // set on
+        // wait to charge up
+        shooter.set(false); // fire
     }
 
 }
