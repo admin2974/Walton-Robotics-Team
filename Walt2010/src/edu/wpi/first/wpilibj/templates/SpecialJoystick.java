@@ -1,47 +1,102 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
 package edu.wpi.first.wpilibj.templates;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Relay;
 
 /**
- * This provides a mechanism for delivering customized functionality based on
- * joystick inputs.  It relies (read: will need to rely) upon well-defined
- * contracts between this class and (ideally) the active <code>RobotMain</code>
- * instance (i.e., the robot out there relying upon this guy to deliver the
- * goods for him!)
  *
  * @author Admin
  */
 public class SpecialJoystick extends Joystick
 {
-
-    /**
-     * TODO:  Consider scope - this ought be private by any metric, neh?
-     */
-    RobotMain robot;
-
-    public SpecialJoystick(RobotMain mainRobot, int channel) {
+    RobotMain Robot;
+    boolean left_right;
+    boolean ballDisabled;
+    public SpecialJoystick(RobotMain mainRobot,int channel, boolean left_right)
+    {
         super(channel);
-        robot = mainRobot;
-    }
+        this.left_right = left_right;
+        ballDisabled = false;
 
+        Robot = mainRobot;
+    }
     /**
      * This method checks the current state of a joystick and controls the robot accordingly.
      */
-    public void check() {
-        //TODO:  Afterburners access must be synchronized!
-        //TODO:  Consider delivering this functionality by defining a method on
-        // RobotMain, perhaps "public void setAfterburners(boolean val)", which
-        // would let you hide the implementation details from this class. The
-        // joystick doesn't (and shouldn't) know that the robot uses a
-        // DriveTrain which has a boolean afterBurners attribute.  This class
-        // should not have to change if the way afterburners are implemented
-        // changes, and a well-defined contract between the joystick and the
-        // robot is the best way to accomplish this here.
-        if (this.getTrigger()) {
-            robot.robot_drive.afterBurners = true;
-        } else {
-            robot.robot_drive.afterBurners = false;
+    public void check()
+    {
+
+        if((this.getY()>.25 && this.getY()>.25) || !ballDisabled)
+        {
+            Robot.ballControl.set(Relay.Value.kReverse);
+        }
+        else if(!ballDisabled)
+        {
+            Robot.ballControl.set(Relay.Value.kForward);
         }
 
+        if(left_right)
+        {
+            if(this.getTrigger())
+            {
+                Robot.robot_drive.Overdrive_L=true;
+            }
+            else
+            {
+                Robot.robot_drive.Overdrive_L=false;
+            }
+        }
+        else
+        {
+            if(this.getTrigger())
+            {
+                Robot.robot_drive.Overdrive_R=true;
+            }
+            else
+            {
+                Robot.robot_drive.Overdrive_R=false;
+            }
+        }
+        if(this.getRawButton(3))
+        {
+            Robot.shooter.fireFull=true;
+            Robot.shoot = true;
+
+        }
+            else if(this.getRawButton(2))
+        {
+            Robot.shooter.fireFull=false;
+            Robot.shoot = true;
+        }
+
+            
+            if(this.getRawButton(5))
+        {
+                ballDisabled = true;
+            Robot.ballControl.set(Relay.Value.kOff);
+        }
+        if(this.getRawButton(4))
+        {
+                ballDisabled = false;
+
+        }
+        if(this.getRawButton(10))
+        {
+            Robot.reload = true;
+        }
+        if(this.getRawButton(9))
+        {
+            Robot.shooter.latch(false);
+        }
+
+
+
     }
+
+
 }
