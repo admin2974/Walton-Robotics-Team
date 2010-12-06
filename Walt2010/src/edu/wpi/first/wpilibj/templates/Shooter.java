@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.wpi.first.wpilibj.templates;
 
 import edu.wpi.first.wpilibj.Solenoid;
@@ -10,18 +6,16 @@ import edu.wpi.first.wpilibj.Solenoid;
  *
  * @author Admin
  */
-public class Shooter
-{
+public class Shooter {
 
     private Solenoid fire1, fire2, returnValve, latchSolenoid;
     private double power;
     private boolean FFM;
-    private boolean reloaded;
+//    private boolean reloaded;
     private boolean m_run = true;
     private boolean m_enabled;
-    private boolean shooting,reloading;
+    private boolean shooting, reloading;
     private Thread m_task;
-
 
     /**
      * This creates an Object that represents the mechanisms that make up the shooter for the robot.
@@ -35,12 +29,11 @@ public class Shooter
      * -unload()
      * these methods tell the Shooter task what to do.
      */
-    public Shooter()
-    {
+    public Shooter() {
         fire1 = new Solenoid(1);
-        fire2 = new Solenoid(2);
+        fire2 = new Solenoid(4);
         returnValve = new Solenoid(3);
-        latchSolenoid = new Solenoid(4);
+        latchSolenoid = new Solenoid(2);
         FFM = true;
         m_enabled = true;
         shooting = false;
@@ -50,16 +43,11 @@ public class Shooter
     /*
      * This Initializes the internal thread that will determine the shooter's actions
      */
-    private void initShooter()
-    {
+
+    private void initShooter() {
         m_task = new ShooterThread(this);
         m_task.start();
     }
-
-
-
-
-
 
     /**
      * Start the shooter.
@@ -88,20 +76,12 @@ public class Shooter
         return m_enabled;
     }
 
-
-
-
-
-
-
     /**
      *This method triggers the firing sequence in the Shooter Thread
      * @param power is the power from 0 - 1.0 which represents the how long the the valve to the systems main pressure will be opened
      */
-    public void fire(double power)
-    {
-        if(!shooting)
-        {
+    public void fire(double power) {
+        if (!shooting) {
             this.power = limit(power);
             shooting = true;
         }
@@ -110,8 +90,7 @@ public class Shooter
     /**
      * This method changes a boolean that tells the Shooters internal Thread to start the reload sequence
      */
-    public void reload()
-    {
+    public void reload() {
         reloading = true;
     }
 
@@ -122,12 +101,11 @@ public class Shooter
      *
      * Also sets shooter's state to unloaded so that the next time the shooter shoots it will reload
      */
-    public void unload()
-    {
+    public void unload() {
         releasePressureToReturn();
         releasePressureToShooter();
         latch(false);
-        reloaded = false;
+//        reloaded = false;
     }
 
     /**
@@ -138,8 +116,7 @@ public class Shooter
      *  -this will produce a less powerfull kick but will not use as much air.
      * @param FullFireMode represents if Full Fire Mode(FFM) is on(true) or off(false)
      */
-    public void setFFM(boolean FullFireMode)
-    {
+    public void setFFM(boolean FullFireMode) {
         FFM = FullFireMode;
     }
 
@@ -148,8 +125,7 @@ public class Shooter
      *              ex) returns true - the shooter will fire with 2 cylinders
      *                  returns false - the shooter will fire with 1 cylinder
      */
-    public boolean getFFM()
-    {
+    public boolean getFFM() {
         return FFM;
     }
 
@@ -158,38 +134,37 @@ public class Shooter
      * This allows any pressure used to pull the kicker back to be released.
      * if this method is not called the cylinder will have an excess amount of pressure in it and will not be able to be fired
      */
-     public void releasePressureToReturn()
-    {
+    public void releasePressureToReturn() {
         returnValve.set(false);
     }
-     /**
-      * Opens valve to the two shooting cylinders. This allows for any air that was used for firing to escape.
-      * if this air is not released the kicker CANNOT be retracted!!!
-      * THIS METHOD MUST BE CALLED AFTER KICKING
-      */
-    public void releasePressureToShooter()
-    {
+
+    /**
+     * Opens valve to the two shooting cylinders. This allows for any air that was used for firing to escape.
+     * if this air is not released the kicker CANNOT be retracted!!!
+     * THIS METHOD MUST BE CALLED AFTER KICKING
+     */
+    public void releasePressureToShooter() {
         fire1.set(false);
         fire2.set(false);
     }
+
     /**
      * Allows pressurized air to flow into one or two of the firing cylinders.
      * The number of cylinders this method uses is determined based on the state of the Shooter object.
      * see setFullFireMode(boolean), and getFullFireMode()
      */
-    public void pressureToFire()
-    {
+    public void pressureToFire() {
         fire1.set(true);
         fire2.set(FFM);
     }
+
     /**
      * Allows pressurized air to flow into one return cylinder
      * assuming that pressure to the top of the cylinder(firing pressure) has been released
      * the kicker will pull itself up off the floor.
      * Note: This does NOT latch the kicker back
      */
-    public void pressureToReturn()
-    {
+    public void pressureToReturn() {
         returnValve.set(true);
     }
 
@@ -198,15 +173,11 @@ public class Shooter
      * @param latched if this is true the latch will close and try to latch the kicker in place
      * if false it will release the kicker(assuming the kicker is there)
      */
-    public void latch(boolean latched)
-    {
-        if(latched)
-        {
-            latchSolenoid.set(false);//false means latch is pressurized
-        }
-        else
-        {
-            latchSolenoid.set(true);//true means latch is NOT pressurized
+    public void latch(boolean latched) {
+        if (latched) {
+            latchSolenoid.set(false); //false means latch is pressurized
+        } else {
+            latchSolenoid.set(true); //true means latch is NOT pressurized
         }
 
     }
@@ -222,11 +193,7 @@ public class Shooter
         return num;
     }
 
-
-
-
-
-/**
+    /**
      * Internal thread.
      *
      * Task which checks the shooter and determines an apropriate action based on shooter's internal counter
@@ -244,59 +211,57 @@ public class Shooter
 
         public void run() {
             while (m_run) {
-                if (m_shooter.enabled())
-                {
-                        if(reloading)
-                        {
-                            m_shooter.latch(false);
-                            m_shooter.releasePressureToShooter();
-                            m_shooter.pressureToReturn();
-                            try {Thread.sleep(300);} catch (InterruptedException e) {}
-                            m_shooter.latch(true);
-                            try {Thread.sleep(100);} catch (InterruptedException e) {}
-                            m_shooter.releasePressureToReturn();
-                            reloaded = true;
+                if (m_shooter.enabled()) {
+                    if (reloading) {
+                        m_shooter.latch(false);
+                        m_shooter.releasePressureToShooter();
+                        m_shooter.pressureToReturn();
+                        try {
+                            Thread.sleep(800);
+                        } catch (InterruptedException e) {
                         }
-                    if(shooting)
-                    {
-                        if(!reloaded)//if someone released shooter then it reloads it before shooting
-                        {
-                            m_shooter.latch(false);
-                            m_shooter.releasePressureToShooter();
-                            m_shooter.pressureToReturn();
-                            try {Thread.sleep(300);} catch (InterruptedException e) {}
-                            m_shooter.latch(true);
-                            try {Thread.sleep(100);} catch (InterruptedException e) {}
-                            m_shooter.releasePressureToReturn();
-                            reloaded = true;
+                        m_shooter.latch(true);
+                        try {
+                            Thread.sleep(400);
+                        } catch (InterruptedException e) {
                         }
+                        m_shooter.releasePressureToReturn();
+//                            reloaded = true;
+                        reloading = false;
+                    } else if (shooting) {
+//                        if(!reloaded)//if someone released shooter then it reloads it before shooting
+//                        {
+//                            m_shooter.latch(false);
+//                            m_shooter.releasePressureToShooter();
+//                            m_shooter.pressureToReturn();
+//                            try {Thread.sleep(800);} catch (InterruptedException e) {}
+//                            m_shooter.latch(true);
+//                            try {Thread.sleep(400);} catch (InterruptedException e) {}
+//                            m_shooter.releasePressureToReturn();
+//                            reloaded = true;
+//                        }
 
                         //pressurize the shooter
                         m_shooter.pressureToFire();
-                        try{Thread.sleep((int)(power*1000));} catch (InterruptedException e) {}
+                        try {
+                            Thread.sleep((int) (power * 1000));
+                        } catch (InterruptedException e) {
+                        }
                         //shooter is pressurized
 
                         //fire the shooter
-                        m_shooter.releasePressureToShooter();
                         m_shooter.latch(false);
-                        try{Thread.sleep(400);} catch (InterruptedException e) {}
+                        try {
+                            Thread.sleep(400);
+                        } catch (InterruptedException e) {
+                        }
                         //shooter is fully extended and has kicked the ball .... hopefully into the goal
 
                         //reload the shooter
-                            m_shooter.latch(false);
-                            m_shooter.releasePressureToShooter();
-                            m_shooter.pressureToReturn();
-                            try {Thread.sleep(300);} catch (InterruptedException e) {}
-                            m_shooter.latch(true);
-                            try {Thread.sleep(100);} catch (InterruptedException e) {}
-                            m_shooter.releasePressureToReturn();
-                            reloaded = true;
-                        //reloading has been completed
-                            shooting = false;//shooting is complete and will not be fired on next loop
+                        m_shooter.reload();
+                        shooting = false;//shooting is complete and will not be fired on next loop
                     }
-                }
-                else
-                {
+                } else {
                     unload();
                 }
                 try {

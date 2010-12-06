@@ -80,7 +80,7 @@ public class Target {
 
         SortedVector sortedTargetList = new SortedVector(targetComparator);
         SortedVector combinedTargetList = new SortedVector(targetComparator);
-
+        System.out.println("number of targets found "+ results.length);
         for (int i = 0; i < results.length; i++) {
             Target target = new Target();
             target.m_rawScore = results[i].m_score;
